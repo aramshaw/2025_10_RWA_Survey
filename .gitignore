@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv
+venv
+
+# IDE settings
+.vscode/
+.idea/
+
+# Temporary files
+~$*.xlsx
+~$*.xls
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Generated charts
+charts/
