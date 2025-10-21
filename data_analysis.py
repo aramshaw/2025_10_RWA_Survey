@@ -1,5 +1,9 @@
 from src.data_processing import load_data, load_column_mapping, apply_data_types
-from src.visualization import create_bar_chart
+from src.visualization import (
+    create_bar_chart,
+    create_comparison_chart,
+    create_reasons_summary_chart,
+)
 
 # Define the file path.
 # Make sure the Excel file is in the same directory as this script,
@@ -75,6 +79,47 @@ if __name__ == "__main__":
             chart_name="support_1st_place_medals_masters_distribution",
             title="Support for 1st Place Medals for Masters",
         )
+
+        # --- NEW: Create charts for the rating questions ---
+        rating_columns = {
+            "rating_promotion_governance": "Rating of Promotion and Governance",
+            "rating_accessibility": "Rating of Accessibility",
+            "rating_positive_experience": "Rating of Positive Experience",
+            "rating_high_performance_pathways": "Rating of High-Performance Pathways",
+        }
+
+        for col, title in rating_columns.items():
+            create_bar_chart(
+                survey_data,  # Using the full dataset for these general ratings
+                col,
+                chart_name=f"{col}_distribution",
+                title=title,
+            )
+        # --- END NEW ---
+
+        # --- NEW: Analyze reasons for not competing among Masters ---
+        reasons_columns = {
+            "reason_recreational_time_commitment": "Time Commitment",
+            "reason_recreational_skill_level": "Skill Level",
+            "reason_recreational_cost": "Cost",
+            "reason_recreational_social_aspect": "Prefer Social Aspect",
+        }
+
+        create_reasons_summary_chart(
+            masters_df,
+            reason_columns=reasons_columns,
+            chart_name="masters_reasons_not_competing",
+            title="Primary Reasons Masters Rowers Do Not Compete",
+        )
+
+        # Also, create a separate chart for the transition support question
+        create_bar_chart(
+            masters_df,
+            "support_transition_to_competitive",
+            chart_name="masters_support_transition_to_competitive",
+            title="Support for Transitioning to Competitive Rowing (Masters)",
+        )
+        # --- END NEW ---
 
     elif survey_data is not None:
         # If only data is loaded, show original data

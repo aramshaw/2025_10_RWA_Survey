@@ -33,30 +33,37 @@ def apply_data_types(df, mapping_df):
     """
     type_mapping = dict(zip(mapping_df["new_name"], mapping_df["recommended_type"]))
 
+    # --- NEW: Define columns that are ordered Likert scales ---
+    ordered_likert_columns = [
+        "support_1st_place_medals_masters",
+        "rating_promotion_governance",
+        "rating_accessibility",
+        "rating_positive_experience",
+        "rating_high_performance_pathways",
+    ]
+    # Define the ordered categories from disagree to agree
+    category_order = [
+        "Strongly Disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly Agree",
+    ]
+    # Create an ordered categorical type
+    cat_dtype = pd.api.types.CategoricalDtype(categories=category_order, ordered=True)
+    # Assuming 1:Strongly Disagree, 2:Disagree, etc.
+    mapping = {i + 1: label for i, label in enumerate(category_order)}
+    # --- END NEW ---
+
     for col_name, dtype in type_mapping.items():
         if col_name in df.columns:
             try:
-                # --- NEW: Handle ordered categorical data for Likert scales ---
-                if col_name == "support_1st_place_medals_masters":
-                    # Define the ordered categories from disagree to agree
-                    category_order = [
-                        "Strongly Disagree",
-                        "Disagree",
-                        "Neutral",
-                        "Agree",
-                        "Strongly Agree",
-                    ]
-                    # Create an ordered categorical type
-                    cat_dtype = pd.api.types.CategoricalDtype(
-                        categories=category_order, ordered=True
-                    )
-                    # Map integer values to the string categories
-                    # Assuming 1:Strongly Disagree, 2:Disagree, etc.
-                    mapping = {i + 1: label for i, label in enumerate(category_order)}
+                # --- MODIFIED: Handle ordered categorical data for Likert scales ---
+                if col_name in ordered_likert_columns:
                     df[col_name] = df[col_name].map(mapping).astype(cat_dtype)
                     print(f"Applied ordered categorical type to '{col_name}'.")
                     continue  # Skip to the next column
-                # --- END NEW ---
+                # --- END MODIFIED ---
 
                 # Handle special cases first
                 if pd.api.types.is_string_dtype(dtype) and dtype.startswith("Int"):
